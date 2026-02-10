@@ -6,28 +6,22 @@ import { Card, CardContent } from '../components/ui/Card';
 
 const team = [
     {
-        name: 'Sarah Chen',
+        name: 'M Pranav',
         role: 'CEO & Founder',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
-        bio: 'Former Google TPM with 15 years in transportation tech.',
+        initials: 'MP',
+        bio: 'Visionary leader driving SmartBus innovation in fleet management technology.',
     },
     {
-        name: 'Marcus Johnson',
+        name: 'Charumathi Sri P',
         role: 'CTO',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
-        bio: 'Ex-Uber engineering lead, specialized in real-time systems.',
+        initials: 'CS',
+        bio: 'Technical architect behind SmartBus real-time tracking and analytics platform.',
     },
     {
-        name: 'Emily Rodriguez',
+        name: 'Kaaviya B',
         role: 'Head of Product',
-        image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
-        bio: 'Product leader from Lyft, passionate about UX.',
-    },
-    {
-        name: 'David Park',
-        role: 'VP of Engineering',
-        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
-        bio: 'Scaled infrastructure at Stripe and Square.',
+        initials: 'KB',
+        bio: 'Product strategist shaping seamless user experiences for fleet operators.',
     },
 ];
 
@@ -244,7 +238,7 @@ export function AboutPage() {
                         <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
                             Meet the people driving SmartBus forward
                         </p>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                             {team.map((member, index) => (
                                 <motion.div
                                     key={member.name}
@@ -252,18 +246,16 @@ export function AboutPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.35 + index * 0.1 }}
                                 >
-                                    <Card className="h-full overflow-hidden hover:border-primary/30 transition-colors">
-                                        <div className="aspect-square bg-surface overflow-hidden">
-                                            <img
-                                                src={member.image}
-                                                alt={member.name}
-                                                className="w-full h-full object-cover"
-                                            />
+                                    <Card className="h-full overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group">
+                                        <div className="pt-8 pb-4 flex justify-center">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-orange-500/20 flex items-center justify-center border-2 border-primary/30 group-hover:border-primary/60 transition-colors">
+                                                <span className="text-2xl font-bold text-primary">{member.initials}</span>
+                                            </div>
                                         </div>
-                                        <CardContent className="p-4 text-center">
-                                            <h3 className="font-semibold">{member.name}</h3>
-                                            <p className="text-sm text-primary">{member.role}</p>
-                                            <p className="text-xs text-muted-foreground mt-2">{member.bio}</p>
+                                        <CardContent className="p-6 text-center">
+                                            <h3 className="text-lg font-semibold mb-1">{member.name}</h3>
+                                            <p className="text-sm text-primary font-medium mb-3">{member.role}</p>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
                                         </CardContent>
                                     </Card>
                                 </motion.div>

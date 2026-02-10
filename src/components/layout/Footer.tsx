@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bus, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+import { Twitter, Linkedin, Github, Youtube } from 'lucide-react';
 
 const footerLinks = {
     product: {
@@ -67,11 +67,9 @@ export function Footer() {
                     {/* Brand Column */}
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                                <Bus className="h-5 w-5 text-primary" />
-                            </div>
+                            <img src="/smartbus-icon.svg" alt="SmartBus" className="w-10 h-10" />
                             <span className="font-bold text-xl">
-                                Smart<span className="text-primary">Bus</span>
+                                smart<span className="text-primary">bus</span>
                             </span>
                         </div>
                         <p className="text-sm text-muted-foreground mb-6 max-w-xs">

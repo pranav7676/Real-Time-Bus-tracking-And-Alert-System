@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fb923c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Location Pin -->
+  <path d="M16 4C10 4 5 9 5 16c0 10 11 18 11 18s11-8 11-18C27 9 22 4 16 4z" fill="url(#g1)"/>
+  <circle cx="16" cy="15" r="4.5" fill="none" stroke="white" stroke-width="1.5"/>
+  <line x1="16" y1="15" x2="16" y2="11.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="15" x2="19" y2="15" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Swoosh -->
+  <path d="M12 30 Q8 34 14 36 Q22 39 30 32" stroke="url(#g1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Bus -->
+  <rect x="24" y="14" width="20" height="12" rx="3" fill="url(#g1)"/>
+  <rect x="40" y="16" width="4" height="8" rx="2" fill="url(#g1)"/>
+  <rect x="26" y="16.5" width="4" height="3.5" rx="1" fill="#1a1a2e" opacity="0.5"/>
+  <rect x="31.5" y="16.5" width="4" height="3.5" rx="1" fill="#1a1a2e" opacity="0.5"/>
+  <rect x="37" y="16.5" width="4" height="3.5" rx="1" fill="#1a1a2e" opacity="0.5"/>
+  <circle cx="29" cy="28" r="2.5" fill="#374151"/>
+  <circle cx="29" cy="28" r="1.5" fill="#6b7280"/>
+  <circle cx="40" cy="28" r="2.5" fill="#374151"/>
+  <circle cx="40" cy="28" r="1.5" fill="#6b7280"/>
+  <circle cx="42.5" cy="19.5" r="1" fill="#fbbf24"/>
+</svg>

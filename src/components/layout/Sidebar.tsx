@@ -11,7 +11,6 @@ import {
     AlertTriangle,
     Settings,
     LogOut,
-    Bus,
     ChevronLeft,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -80,16 +79,14 @@ export function Sidebar() {
             >
                 {/* Logo */}
                 <div className="flex items-center gap-3 px-4 h-16 border-b border-border">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10">
-                        <Bus className="h-5 w-5 text-primary" />
-                    </div>
+                    <img src="/smartbus-icon.svg" alt="SmartBus" className="w-10 h-10" />
                     {!isCollapsed && (
                         <motion.span
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             className="font-bold text-xl"
                         >
-                            Smart<span className="text-primary">Bus</span>
+                            smart<span className="text-primary">bus</span>
                         </motion.span>
                     )}
                 </div>

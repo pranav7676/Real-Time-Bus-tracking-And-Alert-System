@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, ArrowLeft, Bus } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 export function NotFoundPage() {
@@ -13,8 +13,8 @@ export function NotFoundPage() {
           transition={{ duration: 0.5 }}
         >
           {/* Logo */}
-          <div className="w-16 h-16 mx-auto mb-8 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <Bus className="h-8 w-8 text-primary" />
+          <div className="w-16 h-16 mx-auto mb-8">
+            <img src="/smartbus-icon.svg" alt="SmartBus" className="w-16 h-16" />
           </div>
 
           {/* 404 */}

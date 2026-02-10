@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SignUp, useAuth } from '@clerk/clerk-react';
 import { motion } from 'framer-motion';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { ArrowLeft, Check, Zap, Shield, Clock, Star, Bus, Users, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Check, Zap, Shield, Clock, Star, Users, BarChart3 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -70,11 +70,9 @@ export function StartTrialPage() {
                         >
                             <div className="mb-8">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                                        <Bus className="h-6 w-6 text-primary" />
-                                    </div>
+                                    <img src="/smartbus-icon.svg" alt="SmartBus" className="w-12 h-12" />
                                     <span className="font-bold text-2xl">
-                                        Smart<span className="text-primary">Bus</span>
+                                        smart<span className="text-primary">bus</span>
                                     </span>
                                 </div>
                                 <h1 className="text-3xl lg:text-4xl font-bold mb-4">

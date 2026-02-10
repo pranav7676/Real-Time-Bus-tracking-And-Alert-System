@@ -44,11 +44,9 @@ export function LandingPage() {
             <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <Bus className="h-5 w-5 text-primary" />
-                        </div>
+                        <img src="/smartbus-icon.svg" alt="SmartBus" className="w-10 h-10" />
                         <span className="font-bold text-xl">
-                            Smart<span className="text-primary">Bus</span>
+                            smart<span className="text-primary">bus</span>
                         </span>
                     </div>
                     <nav className="hidden md:flex items-center gap-6">
