@@ -26,20 +26,17 @@ export function AttendancePage() {
                     value={847}
                     change="+12%"
                     changeType="positive"
-                    icon={ClipboardCheck}
-                    iconColor="text-primary"
+                    icon={<ClipboardCheck className="h-5 w-5 text-primary" />}
                 />
                 <StatCard
                     title="This Week"
                     value="5,234"
-                    icon={Calendar}
-                    iconColor="text-blue-500"
+                    icon={<Calendar className="h-5 w-5 text-blue-500" />}
                 />
                 <StatCard
                     title="Unique Passengers"
                     value={312}
-                    icon={User}
-                    iconColor="text-purple-500"
+                    icon={<User className="h-5 w-5 text-purple-500" />}
                 />
             </motion.div>
 

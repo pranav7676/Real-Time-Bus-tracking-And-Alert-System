@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useClerk, useUser } from '@clerk/clerk-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     LayoutDashboard,
@@ -12,6 +12,8 @@ import {
     Settings,
     LogOut,
     ChevronLeft,
+    Users,
+    Bus,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/Avatar';
@@ -26,7 +28,35 @@ import {
 } from '../ui/Dialog';
 import { useAppStore } from '../../stores/appStore';
 
-const navItems = [
+const studentNav = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/student' },
+    { icon: Map, label: 'Live Map', path: '/map' },
+    { icon: ClipboardCheck, label: 'Attendance', path: '/attendance' },
+    { icon: AlertTriangle, label: 'Alerts', path: '/alerts' },
+    { icon: Settings, label: 'Settings', path: '/settings' },
+];
+
+const driverNav = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/driver' },
+    { icon: Map, label: 'Live Map', path: '/map' },
+    { icon: Route, label: 'Routes', path: '/routes' },
+    { icon: AlertTriangle, label: 'Alerts', path: '/alerts' },
+    { icon: Settings, label: 'Settings', path: '/settings' },
+];
+
+const adminNav = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/admin' },
+    { icon: Map, label: 'Live Map', path: '/map' },
+    { icon: Route, label: 'Routes', path: '/routes' },
+    { icon: Bus, label: 'Fleet', path: '/routes' },
+    { icon: Users, label: 'Users', path: '/settings' },
+    { icon: ClipboardCheck, label: 'Attendance', path: '/attendance' },
+    { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+    { icon: AlertTriangle, label: 'Alerts', path: '/alerts' },
+    { icon: Settings, label: 'Settings', path: '/settings' },
+];
+
+const defaultNav = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Map, label: 'Live Map', path: '/map' },
     { icon: Route, label: 'Routes', path: '/routes' },
@@ -45,6 +75,15 @@ export function Sidebar() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const userRole = useAppStore((state) => state.userRole);
+
+    const navItems = useMemo(() => {
+        switch (userRole) {
+            case 'STUDENT': return studentNav;
+            case 'DRIVER': return driverNav;
+            case 'ADMIN': return adminNav;
+            default: return defaultNav;
+        }
+    }, [userRole]);
 
     const handleLogout = async () => {
         setIsLoggingOut(true);

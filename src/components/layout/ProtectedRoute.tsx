@@ -25,17 +25,15 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     }
 
     if (!isSignedIn) {
-        return <Navigate to="/" state={{ from: location }} replace />;
+        return <Navigate to="/sign-in" state={{ from: location }} replace />;
     }
 
-    // If no role selected yet, redirect to role selection
     if (!userRole && location.pathname !== '/select-role') {
         return <Navigate to="/select-role" replace />;
     }
 
-    // If roles are restricted and user doesn't have permission
     if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to={`/dashboard/${userRole.toLowerCase()}`} replace />;
     }
 
     return <>{children}</>;

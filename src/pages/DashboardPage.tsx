@@ -1,7 +1,5 @@
 import { useAppStore } from '../stores/appStore';
-import { PassengerDashboard } from '../pages/dashboards/PassengerDashboard';
-import { DriverDashboard } from './dashboards/DriverDashboard';
-import { AdminDashboard } from './dashboards/AdminDashboard';
+import { StudentDashboard, DriverDashboard, AdminDashboard } from './dashboards';
 
 export function DashboardPage() {
     const userRole = useAppStore((state) => state.userRole);
@@ -11,8 +9,8 @@ export function DashboardPage() {
             return <DriverDashboard />;
         case 'ADMIN':
             return <AdminDashboard />;
-        case 'PASSENGER':
+        case 'STUDENT':
         default:
-            return <PassengerDashboard />;
+            return <StudentDashboard />;
     }
 }

@@ -1,3 +1,3 @@
-export { PassengerDashboard } from './PassengerDashboard';
-export { DriverDashboard } from './DriverDashboard';
-export { AdminDashboard } from './AdminDashboard';
+export { default as StudentDashboard } from './StudentDashboard';
+export { default as DriverDashboard } from './DriverDashboard';
+export { default as AdminDashboard } from './AdminDashboard';

@@ -5,13 +5,23 @@ import { motion } from 'framer-motion';
 import { Bus, MapPin, Shield, Clock, Users, Zap } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Footer } from '../components/layout/Footer';
+import { useAppStore } from '../stores/appStore';
 
 export function LandingPage() {
-    const { isSignedIn } = useAuth();
+    const { isSignedIn, isLoaded } = useAuth();
     const navigate = useNavigate();
     const [showAuth, setShowAuth] = useState<'signin' | 'signup' | null>(null);
+    const userRole = useAppStore((state) => state.userRole);
+    const onboardingDone = useAppStore((state) => state.onboardingDone);
 
-    if (isSignedIn) {
+    // Only redirect after Clerk is fully loaded to avoid loops
+    if (isLoaded && isSignedIn) {
+        if (userRole && onboardingDone) {
+            return <Navigate to={`/dashboard/${userRole.toLowerCase()}`} replace />;
+        }
+        if (userRole && !onboardingDone) {
+            return <Navigate to="/onboarding" replace />;
+        }
         return <Navigate to="/select-role" replace />;
     }
 
@@ -52,13 +62,14 @@ export function LandingPage() {
                     <nav className="hidden md:flex items-center gap-6">
                         <button onClick={() => navigate('/pricing')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
                         <button onClick={() => navigate('/about')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</button>
-                        <button onClick={() => navigate('/blog')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</button>
+                        <button onClick={() => navigate('/our-journey')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Our Journey</button>
+                        <button onClick={() => navigate('/contact')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</button>
                     </nav>
                     <div className="flex items-center gap-3">
-                        <Button variant="ghost" onClick={() => setShowAuth('signin')}>
+                        <Button variant="ghost" onClick={() => navigate('/sign-in')}>
                             Sign In
                         </Button>
-                        <Button onClick={() => setShowAuth('signup')}>Get Started</Button>
+                        <Button onClick={() => navigate('/sign-up')}>Get Started</Button>
                     </div>
                 </div>
             </header>
@@ -271,7 +282,7 @@ export function LandingPage() {
                                 }}
                                 routing="hash"
                                 signUpUrl="#signup"
-                                afterSignInUrl="/select-role"
+                                fallbackRedirectUrl="/select-role"
                             />
                         ) : (
                             <SignUp
@@ -283,7 +294,7 @@ export function LandingPage() {
                                 }}
                                 routing="hash"
                                 signInUrl="#signin"
-                                afterSignUpUrl="/select-role"
+                                fallbackRedirectUrl="/select-role"
                             />
                         )}
                     </motion.div>

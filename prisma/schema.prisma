@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  DRIVER
+  ADMIN
+}
+
+enum BusStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum TripStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id              String    @id @default(cuid())
+  clerkId         String    @unique
+  email           String    @unique
+  name            String
+  role            UserRole?
+  phone           String?
+  avatarUrl       String?
+  onboardingDone  Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  driver          Driver?
+  attendances     Attendance[]
+  sosAlerts       SOSAlert[]
+
+  @@index([clerkId])
+  @@index([role])
+}
+
+model Bus {
+  id              String    @id @default(cuid())
+  number          String    @unique
+  routeName       String
+  capacity        Int
+  status          BusStatus @default(INACTIVE)
+  currentOccupancy Int      @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  driver          Driver?
+  locations       BusLocation[]
+  trips           Trip[]
+  attendances     Attendance[]
+  sosAlerts       SOSAlert[]
+  routeStops      RouteStop[]
+
+  @@index([status])
+}
+
+model Driver {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  busId           String?   @unique
+  licenseNumber   String?
+  isAvailable     Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bus             Bus?      @relation(fields: [busId], references: [id])
+  trips           Trip[]
+
+  @@index([userId])
+}
+
+model BusLocation {
+  id              String    @id @default(cuid())
+  busId           String
+  latitude        Float
+  longitude       Float
+  speed           Float     @default(0)
+  heading         Float     @default(0)
+  timestamp       DateTime  @default(now())
+
+  bus             Bus       @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  @@index([busId, timestamp(sort: Desc)])
+}
+
+model Trip {
+  id              String     @id @default(cuid())
+  busId           String
+  driverId        String
+  status          TripStatus @default(IN_PROGRESS)
+  startedAt       DateTime   @default(now())
+  endedAt         DateTime?
+  studentCount    Int        @default(0)
+
+  bus             Bus        @relation(fields: [busId], references: [id])
+  driver          Driver     @relation(fields: [driverId], references: [id])
+
+  @@index([busId, status])
+  @@index([driverId])
+}
+
+model RouteStop {
+  id              String    @id @default(cuid())
+  busId           String
+  name            String
+  latitude        Float
+  longitude       Float
+  orderIndex      Int
+  estimatedTime   String?
+
+  bus             Bus       @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  @@index([busId, orderIndex])
+}
+
+model Attendance {
+  id              String    @id @default(cuid())
+  userId          String
+  busId           String
+  scannedAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bus             Bus       @relation(fields: [busId], references: [id])
+
+  @@index([userId, scannedAt(sort: Desc)])
+  @@index([busId, scannedAt(sort: Desc)])
+}
+
+model SOSAlert {
+  id              String        @id @default(cuid())
+  userId          String
+  busId           String
+  message         String
+  severity        AlertSeverity @default(HIGH)
+  latitude        Float?
+  longitude       Float?
+  resolved        Boolean       @default(false)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  createdAt       DateTime      @default(now())
+
+  user            User          @relation(fields: [userId], references: [id])
+  bus             Bus           @relation(fields: [busId], references: [id])
+
+  @@index([resolved, createdAt(sort: Desc)])
+  @@index([busId])
+}

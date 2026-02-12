@@ -15,8 +15,8 @@ import type { AnalyticsData } from '../../types';
 interface AnalyticsChartProps {
     data: AnalyticsData[];
     type?: 'area' | 'bar';
-    title: string;
-    dataKey: keyof AnalyticsData;
+    title?: string;
+    dataKey?: keyof AnalyticsData;
     className?: string;
 }
 
@@ -24,7 +24,7 @@ export function AnalyticsChart({
     data,
     type = 'area',
     title,
-    dataKey,
+    dataKey = 'ridership',
     className,
 }: AnalyticsChartProps) {
     const CustomTooltip = ({ active, payload, label }: any) => {

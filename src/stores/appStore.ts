@@ -102,6 +102,8 @@ interface AppState {
     // User
     userRole: UserRole | null;
     setUserRole: (role: UserRole) => void;
+    onboardingDone: boolean;
+    setOnboardingDone: (done: boolean) => void;
 
     // Buses
     buses: BusWithLocation[];
@@ -147,6 +149,8 @@ export const useAppStore = create<AppState>((set) => ({
     // User
     userRole: null,
     setUserRole: (role) => set({ userRole: role }),
+    onboardingDone: false,
+    setOnboardingDone: (done) => set({ onboardingDone: done }),
 
     // Buses
     buses: mockBuses,

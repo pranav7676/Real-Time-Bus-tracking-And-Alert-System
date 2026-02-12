@@ -1,5 +1,5 @@
 export { LandingPage } from './LandingPage';
-export { RoleSelectionPage } from './RoleSelectionPage';
+export { default as RoleSelectionPage } from './RoleSelectionPage';
 export { DashboardPage } from './DashboardPage';
 export { MapPage } from './MapPage';
 export { AlertsPage } from './AlertsPage';
@@ -20,3 +20,12 @@ export { HelpCenterPage } from './HelpCenterPage';
 export { BlogPage } from './BlogPage';
 export { SecurityPage } from './SecurityPage';
 export { StartTrialPage } from './StartTrialPage';
+
+// Auth pages
+export { default as SignInPage } from './SignInPage';
+export { default as SignUpPage } from './SignUpPage';
+export { default as OnboardingPage } from './OnboardingPage';
+export { default as OurJourneyPage } from './OurJourneyPage';
+
+// Role dashboards
+export { StudentDashboard, DriverDashboard, AdminDashboard } from './dashboards';

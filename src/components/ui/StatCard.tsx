@@ -1,13 +1,14 @@
 import { cn } from '../../lib/utils';
-import type { LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
     title: string;
     value: string | number;
     change?: string;
     changeType?: 'positive' | 'negative' | 'neutral';
-    icon: LucideIcon;
+    icon?: React.ReactNode;
     iconColor?: string;
+    description?: string;
+    trend?: string;
     className?: string;
 }
 
@@ -16,32 +17,39 @@ export function StatCard({
     value,
     change,
     changeType = 'neutral',
-    icon: Icon,
+    icon,
     iconColor = 'text-primary',
+    description,
+    trend,
     className,
 }: StatCardProps) {
     return (
         <div className={cn('stat-card', className)}>
             <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-muted-foreground">{title}</p>
-                <div className={cn('p-2 rounded-lg bg-surface', iconColor)}>
-                    <Icon className="h-5 w-5" />
-                </div>
+                {icon && (
+                    <div className={cn('p-2 rounded-lg bg-surface', iconColor)}>
+                        {icon}
+                    </div>
+                )}
             </div>
             <div className="flex items-baseline gap-2">
                 <p className="text-3xl font-bold">{value}</p>
-                {change && (
+                {(change || trend) && (
                     <span
                         className={cn('text-sm font-medium', {
-                            'text-success': changeType === 'positive',
+                            'text-success': changeType === 'positive' || trend,
                             'text-destructive': changeType === 'negative',
-                            'text-muted-foreground': changeType === 'neutral',
+                            'text-muted-foreground': changeType === 'neutral' && !trend,
                         })}
                     >
-                        {change}
+                        {change || trend}
                     </span>
                 )}
             </div>
+            {description && (
+                <p className="text-xs text-muted-foreground">{description}</p>
+            )}
         </div>
     );
 }

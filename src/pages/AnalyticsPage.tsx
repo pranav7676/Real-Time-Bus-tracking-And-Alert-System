@@ -24,28 +24,24 @@ export function AnalyticsPage() {
                     value="5,990"
                     change="+8.2%"
                     changeType="positive"
-                    icon={TrendingUp}
-                    iconColor="text-primary"
+                    icon={<TrendingUp className="h-5 w-5 text-primary" />}
                 />
                 <StatCard
                     title="Avg Daily Users"
                     value="856"
                     change="+3.1%"
                     changeType="positive"
-                    icon={Users}
-                    iconColor="text-blue-500"
+                    icon={<Users className="h-5 w-5 text-blue-500" />}
                 />
                 <StatCard
                     title="Avg Trip Duration"
                     value="28 min"
-                    icon={Clock}
-                    iconColor="text-purple-500"
+                    icon={<Clock className="h-5 w-5 text-purple-500" />}
                 />
                 <StatCard
                     title="Peak Hour"
                     value="8-9 AM"
-                    icon={Activity}
-                    iconColor="text-success"
+                    icon={<Activity className="h-5 w-5 text-success" />}
                 />
             </motion.div>
 
