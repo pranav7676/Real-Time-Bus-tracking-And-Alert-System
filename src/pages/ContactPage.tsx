@@ -10,30 +10,30 @@ const contactMethods = [
         icon: Mail,
         title: 'Email Us',
         description: 'Our team typically responds within 24 hours',
-        value: 'hello@smartbus.io',
-        action: 'mailto:hello@smartbus.io',
+        value: 'support@smartbus.in',
+        action: 'mailto:support@smartbus.in',
     },
     {
         icon: Phone,
         title: 'Call Us',
-        description: 'Mon-Fri from 8am to 6pm EST',
-        value: '+1 (555) 123-4567',
-        action: 'tel:+15551234567',
+        description: 'Mon-Sat from 9am to 7pm IST',
+        value: '+91 44 2345 6789',
+        action: 'tel:+914423456789',
     },
     {
         icon: MapPin,
         title: 'Visit Us',
-        description: 'Come say hello at our HQ',
-        value: '100 Market St, San Francisco, CA',
+        description: 'Come visit our Head Office in Delhi',
+        value: 'Connaught Place, New Delhi, India',
         action: 'https://maps.google.com',
     },
 ];
 
 const offices = [
-    { city: 'San Francisco', country: 'USA', timezone: 'PST', type: 'Headquarters' },
-    { city: 'London', country: 'UK', timezone: 'GMT', type: 'EMEA Office' },
-    { city: 'Singapore', country: 'Singapore', timezone: 'SGT', type: 'APAC Office' },
-    { city: 'Toronto', country: 'Canada', timezone: 'EST', type: 'Engineering Hub' },
+    { city: 'New Delhi', region: 'North India', timezone: 'IST', type: 'Head Office', address: 'A-12, Connaught Place', icon: '🏛️' },
+    { city: 'Chennai', region: 'South India (Tamil Nadu)', timezone: 'IST', type: 'Engineering Hub', address: 'T. Nagar, Usman Road', icon: '💻' },
+    { city: 'Mumbai', region: 'West India (Maharashtra)', timezone: 'IST', type: 'Business Office', address: 'BKC, Bandra East', icon: '🏢' },
+    { city: 'Kolkata', region: 'East India (West Bengal)', timezone: 'IST', type: 'Operations Center', address: 'Salt Lake, Sector V', icon: '⚙️' },
 ];
 
 export function ContactPage() {
@@ -51,10 +51,10 @@ export function ContactPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        
+
         setIsSubmitting(false);
         setIsSubmitted(true);
     };
@@ -73,7 +73,7 @@ export function ContactPage() {
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to Home
                     </Button>
-                    <Button onClick={() => navigate('/help')}>Help Center</Button>
+                    <Button onClick={() => navigate('/help-center')}>Help Center</Button>
                 </div>
             </header>
 
@@ -262,12 +262,16 @@ export function ContactPage() {
                                 <h3 className="font-semibold mb-4">Global Offices</h3>
                                 <div className="space-y-4">
                                     {offices.map((office) => (
-                                        <div key={office.city} className="flex justify-between items-center py-2 border-b border-border last:border-0">
-                                            <div>
-                                                <p className="font-medium text-sm">{office.city}</p>
-                                                <p className="text-xs text-muted-foreground">{office.type}</p>
+                                        <div key={office.city} className="flex justify-between items-center py-3 px-3 border border-border rounded-lg hover:border-primary/30 hover:shadow-[0_0_12px_rgba(249,115,22,0.1)] transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-lg">{office.icon}</span>
+                                                <div>
+                                                    <p className="font-medium text-sm">{office.city}</p>
+                                                    <p className="text-xs text-muted-foreground">{office.region}</p>
+                                                    <p className="text-xs text-muted-foreground">{office.address}</p>
+                                                </div>
                                             </div>
-                                            <span className="text-xs text-muted-foreground">{office.timezone}</span>
+                                            <span className="text-xs text-primary font-medium">{office.timezone}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -279,7 +283,7 @@ export function ContactPage() {
                                 <p className="text-sm text-muted-foreground mb-4">
                                     Check our Help Center for FAQs and guides.
                                 </p>
-                                <Button variant="outline" size="sm" onClick={() => navigate('/help')}>
+                                <Button variant="outline" size="sm" onClick={() => navigate('/help-center')}>
                                     Visit Help Center
                                 </Button>
                             </Card>
@@ -307,8 +311,8 @@ export function ContactPage() {
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center">
                                         <MapPin className="h-12 w-12 text-primary mx-auto mb-3" />
-                                        <p className="font-semibold">San Francisco Headquarters</p>
-                                        <p className="text-sm text-muted-foreground">100 Market Street, Suite 300</p>
+                                        <p className="font-semibold">SmartBus Head Office — New Delhi 🇮🇳</p>
+                                        <p className="text-sm text-muted-foreground">A-12, Connaught Place, New Delhi 110001</p>
                                     </div>
                                 </div>
                             </div>

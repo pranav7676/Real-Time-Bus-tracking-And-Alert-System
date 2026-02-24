@@ -20,6 +20,7 @@ export { HelpCenterPage } from './HelpCenterPage';
 export { BlogPage } from './BlogPage';
 export { SecurityPage } from './SecurityPage';
 export { StartTrialPage } from './StartTrialPage';
+export { ConfirmationPage } from './ConfirmationPage';
 
 // Auth pages
 export { default as SignInPage } from './SignInPage';

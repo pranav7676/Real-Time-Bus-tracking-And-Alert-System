@@ -6,6 +6,7 @@ import { Bus, MapPin, Shield, Clock, Users, Zap } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Footer } from '../components/layout/Footer';
 import { useAppStore } from '../stores/appStore';
+import { useStartTrial } from '../lib/startTrial';
 
 export function LandingPage() {
     const { isSignedIn, isLoaded } = useAuth();
@@ -13,6 +14,7 @@ export function LandingPage() {
     const [showAuth, setShowAuth] = useState<'signin' | 'signup' | null>(null);
     const userRole = useAppStore((state) => state.userRole);
     const onboardingDone = useAppStore((state) => state.onboardingDone);
+    const { handleStartTrial } = useStartTrial();
 
     // Only redirect after Clerk is fully loaded to avoid loops
     if (isLoaded && isSignedIn) {
@@ -98,7 +100,7 @@ export function LandingPage() {
                                     platform.
                                 </p>
                                 <div className="flex flex-wrap gap-4">
-                                    <Button size="lg" onClick={() => navigate('/start-trial')}>
+                                    <Button size="lg" onClick={() => handleStartTrial('pro')}>
                                         Start Free Trial
                                     </Button>
                                     <Button
@@ -247,7 +249,7 @@ export function LandingPage() {
                                 Join thousands of organizations using SmartBus to streamline
                                 their transportation operations.
                             </p>
-                            <Button size="xl" onClick={() => navigate('/start-trial')}>
+                            <Button size="xl" onClick={() => handleStartTrial('pro')}>
                                 Get Started Free
                             </Button>
                         </motion.div>

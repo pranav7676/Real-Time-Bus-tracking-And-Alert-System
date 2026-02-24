@@ -6,10 +6,10 @@ const footerLinks = {
     product: {
         title: 'Product',
         links: [
-            { label: 'Features', href: '/watch-demo' },
+            { label: 'Features', href: '/features' },
             { label: 'Pricing', href: '/pricing' },
-            { label: 'Demo', href: '/watch-demo' },
-            { label: 'Enterprise', href: '/organization' },
+            { label: 'Demo', href: '/demo' },
+            { label: 'Enterprise', href: '/enterprise' },
         ],
     },
     company: {
@@ -18,25 +18,25 @@ const footerLinks = {
             { label: 'About', href: '/about' },
             { label: 'Blog', href: '/blog' },
             { label: 'Careers', href: '/careers' },
-            { label: 'Press', href: '/about' },
+            { label: 'Press', href: '/press' },
         ],
     },
     support: {
         title: 'Support',
         links: [
-            { label: 'Help Center', href: '/help' },
+            { label: 'Help Center', href: '/help-center' },
             { label: 'Contact', href: '/contact' },
-            { label: 'Status', href: '/security' },
-            { label: 'API Docs', href: '/help' },
+            { label: 'Status', href: '/status' },
+            { label: 'API Docs', href: '/api-docs' },
         ],
     },
     legal: {
         title: 'Legal',
         links: [
-            { label: 'Privacy', href: '/security' },
-            { label: 'Terms', href: '/security' },
+            { label: 'Privacy', href: '/privacy' },
+            { label: 'Terms', href: '/terms' },
             { label: 'Security', href: '/security' },
-            { label: 'Cookies', href: '/security' },
+            { label: 'Cookies', href: '/cookies' },
         ],
     },
 };
@@ -73,7 +73,7 @@ export function Footer() {
                             </span>
                         </div>
                         <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-                            Enterprise fleet management platform for schools, businesses, and municipalities.
+                            India's leading smart fleet management platform for schools, businesses, and municipalities.
                         </p>
                         <div className="flex items-center gap-3">
                             {socialLinks.map((social) => (
@@ -117,23 +117,23 @@ export function Footer() {
                 <div className="max-w-7xl mx-auto px-6 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <p className="text-sm text-muted-foreground">
-                            © {new Date().getFullYear()} SmartBus, Inc. All rights reserved.
+                            © {new Date().getFullYear()} SmartBus Technologies Pvt. Ltd. All rights reserved. 🇮🇳
                         </p>
                         <div className="flex items-center gap-6">
                             <button
-                                onClick={() => handleLinkClick('/security')}
+                                onClick={() => handleLinkClick('/privacy')}
                                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 Privacy Policy
                             </button>
                             <button
-                                onClick={() => handleLinkClick('/security')}
+                                onClick={() => handleLinkClick('/terms')}
                                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 Terms of Service
                             </button>
                             <button
-                                onClick={() => handleLinkClick('/security')}
+                                onClick={() => handleLinkClick('/cookies')}
                                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 Cookies

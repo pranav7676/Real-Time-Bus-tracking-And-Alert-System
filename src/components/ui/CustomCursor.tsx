@@ -1,199 +1,163 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
-interface CustomCursorProps {
-  /**
-   * Elements with these data attributes will trigger cursor expansion
-   * @default ['data-cursor-hover', 'button', 'a']
-   */
-  hoverSelectors?: string[];
-  /**
-   * Color of the cursor dot (uses CSS variable)
-   * @default 'hsl(var(--primary))'
-   */
-  color?: string;
-  /**
-   * Whether to enable the custom cursor
-   * @default true
-   */
-  enabled?: boolean;
-}
+export function CustomCursor() {
+  const [visible, setVisible] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
-export function CustomCursor({ 
-  hoverSelectors = ['[data-cursor-hover]', 'button', 'a', 'input', '[role="button"]'],
-  color = 'hsl(var(--primary))',
-  enabled = true 
-}: CustomCursorProps) {
-  const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(true); // Default to true to prevent flash
-  
-  // Motion values for smooth cursor movement
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  
-  // Spring physics for smooth following - main cursor
-  const springConfig = useMemo(() => ({ damping: 30, stiffness: 400, mass: 0.5 }), []);
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-  
-  // Spring physics for trailing cursor - must be called unconditionally
-  const trailSpringConfig = useMemo(() => ({ damping: 20, stiffness: 200 }), []);
-  const trailX = useSpring(cursorX, trailSpringConfig);
-  const trailY = useSpring(cursorY, trailSpringConfig);
+  const posRef = useRef({ x: -100, y: -100 });
+  const outerRef = useRef({ x: -100, y: -100 });
+  const innerElRef = useRef<HTMLDivElement>(null);
+  const outerElRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const trackedElements = useRef(new WeakSet<Element>());
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    cursorX.set(e.clientX);
-    cursorY.set(e.clientY);
-    setIsVisible(true);
-  }, [cursorX, cursorY]);
+  // Check for mobile / reduced motion (reactive to resize)
+  const [disabled, setDisabled] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return (
+      'ontouchstart' in window ||
+      window.innerWidth < 768 ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
+  });
 
-  const handleMouseEnter = useCallback(() => {
-    setIsVisible(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsVisible(false);
-  }, []);
-
-  const handleElementHover = useCallback((e: Event) => {
-    setIsHovering(e.type === 'mouseenter');
-  }, []);
-
-  // Check for touch device on mount
   useEffect(() => {
-    const checkTouchDevice = () => {
-      const isTouch = 
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0 ||
-        window.matchMedia('(pointer: coarse)').matches;
-      setIsTouchDevice(isTouch);
+    if (typeof window === 'undefined') return;
+
+    const checkDisabled = () => {
+      setDisabled(
+        'ontouchstart' in window ||
+        window.innerWidth < 768 ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      );
     };
-    
-    checkTouchDevice();
+
+    window.addEventListener('resize', checkDisabled);
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    mq.addEventListener('change', checkDisabled);
+
+    return () => {
+      window.removeEventListener('resize', checkDisabled);
+      mq.removeEventListener('change', checkDisabled);
+    };
   }, []);
 
-  // Set up event listeners
+  const animate = useCallback(() => {
+    const lerp = 0.15;
+    outerRef.current.x += (posRef.current.x - outerRef.current.x) * lerp;
+    outerRef.current.y += (posRef.current.y - outerRef.current.y) * lerp;
+
+    // Direct DOM updates (no re-renders)
+    if (innerElRef.current) {
+      innerElRef.current.style.left = `${posRef.current.x - 4}px`;
+      innerElRef.current.style.top = `${posRef.current.y - 4}px`;
+    }
+    if (outerElRef.current) {
+      const size = outerElRef.current.dataset.hovering === 'true' ? 24 : 18;
+      outerElRef.current.style.left = `${outerRef.current.x - size}px`;
+      outerElRef.current.style.top = `${outerRef.current.y - size}px`;
+    }
+
+    rafRef.current = requestAnimationFrame(animate);
+  }, []);
+
   useEffect(() => {
-    if (isTouchDevice || !enabled) return;
+    if (disabled) return;
 
-    // Add global mouse listeners
-    window.addEventListener('mousemove', handleMouseMove);
-    document.body.addEventListener('mouseenter', handleMouseEnter);
-    document.body.addEventListener('mouseleave', handleMouseLeave);
+    setVisible(true);
 
-    // Add hover listeners to interactive elements
-    const selector = hoverSelectors.join(', ');
-    const elements = document.querySelectorAll(selector);
-    
-    elements.forEach(el => {
-      el.addEventListener('mouseenter', handleElementHover);
-      el.addEventListener('mouseleave', handleElementHover);
-    });
+    const onMove = (e: MouseEvent) => {
+      posRef.current = { x: e.clientX, y: e.clientY };
+    };
+    const onDown = () => setClicked(true);
+    const onUp = () => setClicked(false);
+    const onLeave = () => setHidden(true);
+    const onEnter = () => setHidden(false);
 
-    // Use MutationObserver to handle dynamically added elements
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLElement) {
-            if (hoverSelectors.some(sel => node.matches?.(sel))) {
-              node.addEventListener('mouseenter', handleElementHover);
-              node.addEventListener('mouseleave', handleElementHover);
-            }
-            // Check children
-            const children = node.querySelectorAll?.(selector);
-            children?.forEach(child => {
-              child.addEventListener('mouseenter', handleElementHover);
-              child.addEventListener('mouseleave', handleElementHover);
-            });
-          }
-        });
+    document.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('mouseleave', onLeave);
+    document.addEventListener('mouseenter', onEnter);
+
+    rafRef.current = requestAnimationFrame(animate);
+
+    // Hover detection using WeakSet to prevent duplicate listeners
+    const hoverEnter = () => setHovering(true);
+    const hoverLeave = () => setHovering(false);
+
+    const addHoverListeners = () => {
+      const interactables = document.querySelectorAll(
+        'a, button, input, textarea, select, [role="button"], [data-cursor-hover]'
+      );
+      interactables.forEach((el) => {
+        if (!trackedElements.current.has(el)) {
+          trackedElements.current.add(el);
+          el.addEventListener('mouseenter', hoverEnter);
+          el.addEventListener('mouseleave', hoverLeave);
+        }
       });
-    });
+    };
 
+    addHoverListeners();
+    const observer = new MutationObserver(addHoverListeners);
     observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeEventListener('mouseenter', handleMouseEnter);
-      document.body.removeEventListener('mouseleave', handleMouseLeave);
-      
-      elements.forEach(el => {
-        el.removeEventListener('mouseenter', handleElementHover);
-        el.removeEventListener('mouseleave', handleElementHover);
-      });
-      
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mouseenter', onEnter);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       observer.disconnect();
     };
-  }, [enabled, isTouchDevice, hoverSelectors, handleMouseMove, handleMouseEnter, handleMouseLeave, handleElementHover]);
+  }, [animate, disabled]);
 
-  // Don't render on touch devices or when disabled - but AFTER all hooks
-  if (isTouchDevice || !enabled) return null;
+  if (disabled || !visible) return null;
 
   return (
     <>
-      {/* Main cursor dot */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-        }}
-        animate={{
-          opacity: isVisible ? 1 : 0,
-          scale: isHovering ? 3 : 1,
-        }}
-        transition={{
-          opacity: { duration: 0.2 },
-          scale: { type: 'spring', stiffness: 400, damping: 30 },
-        }}
-      >
-        <div
-          className="w-2 h-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            backgroundColor: isHovering ? 'transparent' : color,
-            border: isHovering ? `1.5px solid ${color}` : 'none',
-            width: isHovering ? '2.5rem' : '0.5rem',
-            height: isHovering ? '2.5rem' : '0.5rem',
-            mixBlendMode: isHovering ? 'difference' : 'normal',
-            transition: 'width 0.2s ease, height 0.2s ease, background-color 0.2s ease',
-          }}
-        />
-      </motion.div>
-      
-      {/* Trailing cursor (outer ring) */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
-        style={{
-          x: trailX,
-          y: trailY,
-        }}
-        animate={{
-          opacity: isVisible && !isHovering ? 0.3 : 0,
-        }}
-        transition={{ opacity: { duration: 0.3 } }}
-      >
-        <div
-          className="w-8 h-8 -translate-x-1/2 -translate-y-1/2 rounded-full border"
-          style={{ borderColor: color }}
-        />
-      </motion.div>
+      {/* Hide default cursor globally */}
+      <style>{`* { cursor: none !important; }`}</style>
 
-      {/* Global style to hide default cursor on interactive elements */}
-      <style>{`
-        @media (pointer: fine) {
-          body, 
-          button, 
-          a, 
-          input,
-          [role="button"],
-          [data-cursor-hover] {
-            cursor: none !important;
-          }
-        }
-      `}</style>
+      {/* Inner dot */}
+      <div
+        ref={innerElRef}
+        className="fixed pointer-events-none z-[9999] mix-blend-difference"
+        style={{
+          left: -100,
+          top: -100,
+          width: clicked ? 6 : 8,
+          height: clicked ? 6 : 8,
+          borderRadius: '50%',
+          backgroundColor: '#f97316',
+          opacity: hidden ? 0 : 1,
+          transition: 'width 0.15s, height 0.15s, opacity 0.3s',
+        }}
+      />
+
+      {/* Outer ring with glow */}
+      <div
+        ref={outerElRef}
+        data-hovering={hovering}
+        className="fixed pointer-events-none z-[9998]"
+        style={{
+          left: -100,
+          top: -100,
+          width: hovering ? 48 : 36,
+          height: hovering ? 48 : 36,
+          borderRadius: '50%',
+          border: `2px solid ${hovering ? '#f97316' : 'rgba(249, 115, 22, 0.5)'}`,
+          boxShadow: hovering
+            ? '0 0 20px rgba(249, 115, 22, 0.4), 0 0 40px rgba(249, 115, 22, 0.1)'
+            : '0 0 10px rgba(249, 115, 22, 0.15)',
+          opacity: hidden ? 0 : clicked ? 0.6 : 1,
+          transition: 'width 0.3s ease-out, height 0.3s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.3s',
+        }}
+      />
     </>
   );
 }
-
-export default CustomCursor;

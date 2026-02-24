@@ -3,6 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppStore } from './stores/appStore';
 import { AppLayout, ErrorBoundary } from './components/layout';
 import { AuthGuard } from './components/auth';
+import { CustomCursor } from './components/ui/CustomCursor';
+import { ScrollProgress } from './components/ui/ScrollProgress';
+import { BackToTop } from './components/ui/BackToTop';
+import { CommandPalette } from './components/ui/CommandPalette';
+import { MobileBottomNav } from './components/ui/MobileBottomNav';
 import {
   LandingPage,
   RoleSelectionPage,
@@ -32,6 +37,20 @@ import {
   DriverDashboard,
   AdminDashboard,
 } from './pages';
+import { CartPage } from './pages/CartPage';
+import { DemoPage } from './pages/DemoPage';
+import { NotificationsPage } from './pages/NotificationsPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { BillingPage } from './pages/BillingPage';
+import { ConfirmationPage } from './pages/ConfirmationPage';
+import { FeaturesPage } from './pages/FeaturesPage';
+import { EnterprisePage } from './pages/EnterprisePage';
+import { PressPage } from './pages/PressPage';
+import { PrivacyPage } from './pages/PrivacyPage';
+import { TermsPage } from './pages/TermsPage';
+import { CookiesPage } from './pages/CookiesPage';
+import { StatusPage } from './pages/StatusPage';
+import { ApiDocsPage } from './pages/ApiDocsPage';
 
 function PageLoader() {
   return (
@@ -54,6 +73,10 @@ function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <CustomCursor />
+        <ScrollProgress />
+        <CommandPalette />
+        <BackToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Public Routes */}
@@ -65,10 +88,20 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/organization" element={<OrganizationPage />} />
             <Route path="/careers" element={<CareersPage />} />
+            <Route path="/help-center" element={<HelpCenterPage />} />
             <Route path="/help" element={<HelpCenterPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/security" element={<SecurityPage />} />
             <Route path="/start-trial" element={<StartTrialPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/demo" element={<DemoPage />} />
+            <Route path="/enterprise" element={<EnterprisePage />} />
+            <Route path="/press" element={<PressPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
+            <Route path="/status" element={<StatusPage />} />
+            <Route path="/api-docs" element={<ApiDocsPage />} />
 
             {/* Auth Routes */}
             <Route path="/sign-in/*" element={<SignInPage />} />
@@ -142,13 +175,21 @@ function App() {
               <Route path="/attendance" element={<AttendancePage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
             </Route>
+
+            {/* Protected standalone pages (own layout, not AppLayout) */}
+            <Route path="/cart" element={<AuthGuard requireOnboarding={false}><CartPage /></AuthGuard>} />
+            <Route path="/profile" element={<AuthGuard requireOnboarding={false}><ProfilePage /></AuthGuard>} />
+            <Route path="/settings" element={<AuthGuard requireOnboarding={false}><SettingsPage /></AuthGuard>} />
+            <Route path="/billing" element={<AuthGuard requireOnboarding={false}><BillingPage /></AuthGuard>} />
+            <Route path="/notifications" element={<AuthGuard requireOnboarding={false}><NotificationsPage /></AuthGuard>} />
+            <Route path="/confirmation" element={<AuthGuard requireOnboarding={false}><ConfirmationPage /></AuthGuard>} />
 
             {/* 404 */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
+        <MobileBottomNav />
       </BrowserRouter>
     </ErrorBoundary>
   );
