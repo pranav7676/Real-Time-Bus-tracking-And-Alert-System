@@ -11,6 +11,9 @@ import {
     DialogTitle,
 } from '../ui/Dialog';
 import { useAppStore } from '../../stores/appStore';
+import { sosService } from '../../services/sosService';
+import { useLanguage } from '../../context/LanguageContext';
+import { useToast } from '../../context/ToastContext';
 import type { SOSAlert } from '../../types';
 
 interface SOSButtonProps {
@@ -18,35 +21,45 @@ interface SOSButtonProps {
 }
 
 export function SOSButton({ busId }: SOSButtonProps) {
+    const { t } = useLanguage();
+    const { showToast } = useToast();
     const [showConfirm, setShowConfirm] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [sent, setSent] = useState(false);
+    const [error, setError] = useState('');
     const addAlert = useAppStore((state) => state.addAlert);
 
     const handleSOS = async () => {
         setIsSending(true);
+        setError('');
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const result = await sosService.triggerAlert('current-user', busId);
 
-        const alert: SOSAlert = {
-            id: `sos-${Date.now()}`,
-            userId: 'current-user',
-            busId,
-            message: 'Emergency alert triggered',
-            resolved: false,
-            createdAt: new Date(),
-        };
+        if (result.success && result.alert) {
+            const alert: SOSAlert = {
+                id: result.alert.id,
+                userId: 'current-user',
+                busId,
+                message: result.alert.message || t('sos.title'),
+                resolved: false,
+                createdAt: new Date(),
+            };
 
-        addAlert(alert);
-        setIsSending(false);
-        setSent(true);
+            addAlert(alert);
+            setIsSending(false);
+            setSent(true);
+            showToast(t('sos.alertSent'), 'success');
 
-        // Reset after 3 seconds
-        setTimeout(() => {
-            setSent(false);
-            setShowConfirm(false);
-        }, 3000);
+            // Reset after 3 seconds
+            setTimeout(() => {
+                setSent(false);
+                setShowConfirm(false);
+            }, 3000);
+        } else {
+            setIsSending(false);
+            setError(result.error || 'Failed to send alert');
+            showToast(result.error || 'Failed to send alert', 'error');
+        }
     };
 
     return (
@@ -56,27 +69,28 @@ export function SOSButton({ busId }: SOSButtonProps) {
                 size="lg"
                 className="gap-2"
                 onClick={() => setShowConfirm(true)}
+                aria-label={t('sos.button')}
             >
-                <AlertTriangle className="h-5 w-5" />
-                SOS Emergency
+                <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+                {t('sos.button')}
             </Button>
 
             <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-destructive">
-                            <AlertTriangle className="h-5 w-5" />
-                            Emergency Alert
+                            <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+                            {t('sos.title')}
                         </DialogTitle>
                         <DialogDescription>
                             {sent
-                                ? 'Your emergency alert has been sent. Help is on the way.'
-                                : 'Are you sure you want to send an emergency alert? This will notify all administrators immediately.'}
+                                ? t('sos.sentMessage')
+                                : t('sos.confirmMessage')}
                         </DialogDescription>
                     </DialogHeader>
 
                     {sent ? (
-                        <div className="flex flex-col items-center py-6">
+                        <div className="flex flex-col items-center py-6" role="status" aria-label={t('sos.alertSent')}>
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
@@ -101,17 +115,22 @@ export function SOSButton({ busId }: SOSButtonProps) {
                                     />
                                 </motion.svg>
                             </motion.div>
-                            <p className="mt-4 text-sm font-medium text-success">Alert Sent Successfully</p>
+                            <p className="mt-4 text-sm font-medium text-success">{t('sos.alertSent')}</p>
                         </div>
                     ) : (
-                        <DialogFooter className="gap-2 sm:gap-0">
-                            <Button variant="outline" onClick={() => setShowConfirm(false)}>
-                                Cancel
-                            </Button>
-                            <Button variant="destructive" onClick={handleSOS} loading={isSending}>
-                                {isSending ? 'Sending...' : 'Send Alert'}
-                            </Button>
-                        </DialogFooter>
+                        <>
+                            {error && (
+                                <p className="text-sm text-destructive text-center py-2">{error}</p>
+                            )}
+                            <DialogFooter className="gap-2 sm:gap-0">
+                                <Button variant="outline" onClick={() => setShowConfirm(false)}>
+                                    {t('common.cancel')}
+                                </Button>
+                                <Button variant="destructive" onClick={handleSOS} loading={isSending}>
+                                    {isSending ? t('sos.sending') : t('sos.sendAlert')}
+                                </Button>
+                            </DialogFooter>
+                        </>
                     )}
                 </DialogContent>
             </Dialog>
@@ -125,6 +144,7 @@ interface AlertCardProps {
 }
 
 export function AlertCard({ alert, onResolve }: AlertCardProps) {
+    const { t } = useLanguage();
     const [isResolving, setIsResolving] = useState(false);
 
     const handleResolve = async () => {
@@ -153,10 +173,12 @@ export function AlertCard({ alert, onResolve }: AlertCardProps) {
                 ? 'bg-card border-border'
                 : 'bg-destructive/10 border-destructive/30 animate-pulse-slow'
                 }`}
+            role="alert"
+            aria-live="polite"
         >
             {!alert.resolved && (
                 <div className="absolute top-4 right-4">
-                    <span className="flex h-3 w-3">
+                    <span className="flex h-3 w-3" aria-hidden="true">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
                     </span>
@@ -165,16 +187,16 @@ export function AlertCard({ alert, onResolve }: AlertCardProps) {
 
             <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg ${alert.resolved ? 'bg-surface' : 'bg-destructive/20'}`}>
-                    <AlertTriangle className={`h-5 w-5 ${alert.resolved ? 'text-muted-foreground' : 'text-destructive'}`} />
+                    <AlertTriangle className={`h-5 w-5 ${alert.resolved ? 'text-muted-foreground' : 'text-destructive'}`} aria-hidden="true" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                         <span className={`text-sm font-medium ${alert.resolved ? 'text-muted-foreground' : 'text-destructive'}`}>
-                            {alert.resolved ? 'Resolved' : 'ACTIVE SOS'}
+                            {alert.resolved ? t('alerts.resolved') : t('alerts.activeSOS')}
                         </span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
+                            <Clock className="h-3 w-3" aria-hidden="true" />
                             {timeAgo(new Date(alert.createdAt))}
                         </span>
                     </div>
@@ -184,7 +206,7 @@ export function AlertCard({ alert, onResolve }: AlertCardProps) {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         {alert.bus && (
                             <span className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3" />
+                                <MapPin className="h-3 w-3" aria-hidden="true" />
                                 {alert.bus.number} - {alert.bus.routeName}
                             </span>
                         )}
@@ -197,8 +219,9 @@ export function AlertCard({ alert, onResolve }: AlertCardProps) {
                         size="sm"
                         onClick={handleResolve}
                         loading={isResolving}
+                        aria-label={t('alerts.markResolved')}
                     >
-                        Mark Resolved
+                        {t('alerts.markResolved')}
                     </Button>
                 )}
             </div>

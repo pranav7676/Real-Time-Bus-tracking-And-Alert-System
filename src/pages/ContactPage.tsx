@@ -17,21 +17,21 @@ const contactMethods = [
         icon: Phone,
         title: 'Call Us',
         description: 'Mon-Sat from 9am to 7pm IST',
-        value: '+91 44 2345 6789',
-        action: 'tel:+914423456789',
+        value: '+91 98765 43210',
+        action: 'tel:+919876543210',
     },
     {
         icon: MapPin,
         title: 'Visit Us',
-        description: 'Come visit our Head Office in Delhi',
-        value: 'Connaught Place, New Delhi, India',
-        action: 'https://maps.google.com',
+        description: 'Come visit our Head Office in Chennai',
+        value: 'No. 42, Mount Road, T. Nagar, Chennai 600017',
+        action: 'https://maps.google.com/?q=13.0418,80.2341',
     },
 ];
 
 const offices = [
-    { city: 'New Delhi', region: 'North India', timezone: 'IST', type: 'Head Office', address: 'A-12, Connaught Place', icon: '🏛️' },
-    { city: 'Chennai', region: 'South India (Tamil Nadu)', timezone: 'IST', type: 'Engineering Hub', address: 'T. Nagar, Usman Road', icon: '💻' },
+    { city: 'Chennai', region: 'South India (Tamil Nadu)', timezone: 'IST', type: 'Head Office', address: 'No. 42, Mount Road, T. Nagar', icon: '🏛️' },
+    { city: 'New Delhi', region: 'North India', timezone: 'IST', type: 'Regional Office', address: 'A-12, Connaught Place', icon: '🏢' },
     { city: 'Mumbai', region: 'West India (Maharashtra)', timezone: 'IST', type: 'Business Office', address: 'BKC, Bandra East', icon: '🏢' },
     { city: 'Kolkata', region: 'East India (West Bengal)', timezone: 'IST', type: 'Operations Center', address: 'Salt Lake, Sector V', icon: '⚙️' },
 ];
@@ -311,8 +311,8 @@ export function ContactPage() {
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center">
                                         <MapPin className="h-12 w-12 text-primary mx-auto mb-3" />
-                                        <p className="font-semibold">SmartBus Head Office — New Delhi 🇮🇳</p>
-                                        <p className="text-sm text-muted-foreground">A-12, Connaught Place, New Delhi 110001</p>
+                                        <p className="font-semibold">SmartBus Head Office — Chennai 🇮🇳</p>
+                                        <p className="text-sm text-muted-foreground">No. 42, Mount Road, T. Nagar, Chennai, Tamil Nadu 600017</p>
                                     </div>
                                 </div>
                             </div>

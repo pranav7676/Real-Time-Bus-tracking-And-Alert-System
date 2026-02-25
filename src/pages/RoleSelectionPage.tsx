@@ -65,12 +65,12 @@ export default function RoleSelectionPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 py-12">
-      <div className="max-w-4xl w-full">
+      <div className="max-w-4xl w-full flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-12 w-full"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
             <img src="/smartbus-icon.svg" alt="SmartBus" className="w-10 h-10" />
@@ -84,7 +84,7 @@ export default function RoleSelectionPage() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8 w-full items-stretch">
           {roles.map((role, index) => (
             <motion.button
               key={role.id}
@@ -92,11 +92,11 @@ export default function RoleSelectionPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               onClick={() => setSelectedRole(role.id)}
-              className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 card-lift-glow ${
+              className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 h-full flex flex-col ${
                 selectedRole === role.id
-                  ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                  : 'border-border bg-card hover:border-primary/30'
-              } ${role.glow}`}
+                  ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/20'
+                  : 'border-border bg-card hover:border-primary/30 hover:shadow-md'
+              }`}
             >
               {selectedRole === role.id && (
                 <motion.div
@@ -111,7 +111,7 @@ export default function RoleSelectionPage() {
               )}
 
               <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-4 shadow-lg`}
+                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-4 shadow-lg flex-shrink-0`}
               >
                 <role.icon className="h-7 w-7 text-white" />
               </div>
@@ -119,10 +119,10 @@ export default function RoleSelectionPage() {
               <h3 className="text-lg font-bold mb-2">{role.title}</h3>
               <p className="text-sm text-muted-foreground mb-4">{role.description}</p>
 
-              <ul className="space-y-2">
+              <ul className="space-y-2 mt-auto">
                 {role.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -135,7 +135,7 @@ export default function RoleSelectionPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="flex justify-center"
+          className="flex justify-center w-full"
         >
           <button
             onClick={handleSubmit}

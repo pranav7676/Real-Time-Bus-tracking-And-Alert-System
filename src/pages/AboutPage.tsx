@@ -49,7 +49,7 @@ const values = [
 ];
 
 const milestones = [
-    { year: '2021', title: 'Founded', description: 'SmartBus launched in Silicon Valley' },
+    { year: '2021', title: 'Founded', description: 'SmartBus launched in Chennai, India' },
     { year: '2022', title: '100+ Clients', description: 'Reached first major milestone' },
     { year: '2023', title: 'Series A', description: 'Raised $15M to expand globally' },
     { year: '2024', title: '10,000+ Buses', description: 'Now tracking 10K+ buses daily' },
@@ -134,9 +134,9 @@ export function AboutPage() {
                                             systems that couldn't keep up with modern demands.
                                         </p>
                                         <p>
-                                            Our founders, veterans of Silicon Valley's top tech companies,
-                                            saw an opportunity to bring enterprise-grade technology to an
-                                            industry that desperately needed it.
+                                            Our founders, based in Chennai, India, saw an opportunity to
+                                            bring enterprise-grade technology to an industry that
+                                            desperately needed it.
                                         </p>
                                         <p>
                                             Today, we're proud to serve organizations across 15 countries,

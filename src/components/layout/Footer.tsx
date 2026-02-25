@@ -72,8 +72,12 @@ export function Footer() {
                                 smart<span className="text-primary">bus</span>
                             </span>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-6 max-w-xs">
+                        <p className="text-sm text-muted-foreground mb-4 max-w-xs">
                             India's leading smart fleet management platform for schools, businesses, and municipalities.
+                        </p>
+                        <p className="text-xs text-muted-foreground mb-6 max-w-xs">
+                            📍 No. 42, Mount Road, T. Nagar, Chennai, Tamil Nadu 600017
+                            <br />📞 +91 98765 43210 &nbsp;|&nbsp; ✉️ support@smartbus.in
                         </p>
                         <div className="flex items-center gap-3">
                             {socialLinks.map((social) => (

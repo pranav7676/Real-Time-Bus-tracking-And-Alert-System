@@ -2,24 +2,24 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUser, useClerk } from '@clerk/clerk-react';
-import { ArrowLeft, Settings, Palette, Bell, Shield, Globe, Moon, Sun, AlertTriangle, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Settings, Palette, Bell, Shield, Globe, Moon, Sun, Monitor, AlertTriangle, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { useAppStore } from '../stores/appStore';
 import { Footer } from '../components/layout/Footer';
+import { useLanguage } from '../context/LanguageContext';
+import { useTheme, type ThemeMode } from '../context/ThemeContext';
 
-const languages = ['English', 'Hindi (हिन्दी)', 'Tamil (தமிழ்)', 'Telugu (తెలుగు)', 'Marathi (मराठी)', 'Bengali (বাংলা)'];
 const timezones = ['Asia/Kolkata (IST)', 'America/New_York (EST)', 'Europe/London (GMT)', 'Asia/Singapore (SGT)'];
 
 export function SettingsPage() {
     const navigate = useNavigate();
     const { user } = useUser();
     const { openUserProfile } = useClerk();
-    const theme = useAppStore((state) => state.theme);
-    const toggleTheme = useAppStore((state) => state.toggleTheme);
+    const { language, setLanguage, t, languageNames, availableLanguages } = useLanguage();
+    const { themeMode, setThemeMode } = useTheme();
 
-    const [language, setLanguage] = useState('English');
     const [timezone, setTimezone] = useState('Asia/Kolkata (IST)');
     const [emailNotif, setEmailNotif] = useState(true);
     const [smsNotif, setSmsNotif] = useState(false);
@@ -27,10 +27,16 @@ export function SettingsPage() {
     const [activeTab, setActiveTab] = useState('account');
 
     const tabs = [
-        { id: 'account', label: 'Account', icon: Settings },
-        { id: 'preferences', label: 'Preferences', icon: Palette },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'security', label: 'Security', icon: Shield },
+        { id: 'account', label: t('settings.account'), icon: Settings },
+        { id: 'preferences', label: t('settings.preferences'), icon: Palette },
+        { id: 'notifications', label: t('settings.notifications'), icon: Bell },
+        { id: 'security', label: t('settings.security'), icon: Shield },
+    ];
+
+    const themeOptions: { mode: ThemeMode; icon: typeof Sun; label: string }[] = [
+        { mode: 'light', icon: Sun, label: t('settings.light') },
+        { mode: 'dark', icon: Moon, label: t('settings.dark') },
+        { mode: 'system', icon: Monitor, label: t('settings.system') },
     ];
 
     return (
@@ -38,7 +44,7 @@ export function SettingsPage() {
             <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <Button variant="ghost" onClick={() => navigate(-1)}>
-                        <ArrowLeft className="h-4 w-4 mr-2" />Back
+                        <ArrowLeft className="h-4 w-4 mr-2" />{t('common.back')}
                     </Button>
                     <span className="font-bold text-xl">smart<span className="text-primary">bus</span></span>
                     <div />
@@ -46,16 +52,16 @@ export function SettingsPage() {
             </header>
 
             <div className="pt-20 max-w-5xl mx-auto px-6">
-                <Breadcrumb items={[{ label: 'Settings' }]} />
+                <Breadcrumb items={[{ label: t('settings.title') }]} />
             </div>
 
             <main className="pt-8 pb-16">
                 <div className="max-w-5xl mx-auto px-6">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                         <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-                            <Settings className="h-7 w-7 text-primary" /> Settings
+                            <Settings className="h-7 w-7 text-primary" /> {t('settings.title')}
                         </h1>
-                        <p className="text-muted-foreground mb-8">Manage your account preferences and configuration</p>
+                        <p className="text-muted-foreground mb-8">{t('settings.subtitle')}</p>
 
                         <div className="grid lg:grid-cols-4 gap-8">
                             {/* Sidebar Tabs */}
@@ -77,28 +83,28 @@ export function SettingsPage() {
                                 {activeTab === 'account' && (
                                     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-4"><CardTitle>Account Information</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-4"><CardTitle>{t('settings.accountInfo')}</CardTitle></CardHeader>
                                             <CardContent className="p-0 space-y-4">
                                                 <div className="grid sm:grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+                                                        <label className="text-sm font-medium text-muted-foreground">{t('settings.fullName')}</label>
                                                         <p className="mt-1 font-medium">{user?.fullName || 'Not set'}</p>
                                                     </div>
                                                     <div>
-                                                        <label className="text-sm font-medium text-muted-foreground">Email</label>
+                                                        <label className="text-sm font-medium text-muted-foreground">{t('settings.email')}</label>
                                                         <p className="mt-1 font-medium">{user?.primaryEmailAddress?.emailAddress || 'Not set'}</p>
                                                     </div>
                                                     <div>
-                                                        <label className="text-sm font-medium text-muted-foreground">User ID</label>
+                                                        <label className="text-sm font-medium text-muted-foreground">{t('settings.userId')}</label>
                                                         <p className="mt-1 font-mono text-sm text-muted-foreground">{user?.id}</p>
                                                     </div>
                                                     <div>
-                                                        <label className="text-sm font-medium text-muted-foreground">Created</label>
+                                                        <label className="text-sm font-medium text-muted-foreground">{t('settings.created')}</label>
                                                         <p className="mt-1 text-sm">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : 'N/A'}</p>
                                                     </div>
                                                 </div>
                                                 <Button variant="outline" onClick={() => openUserProfile()}>
-                                                    <ExternalLink className="h-4 w-4 mr-2" />Manage Clerk Profile
+                                                    <ExternalLink className="h-4 w-4 mr-2" />{t('settings.manageProfile')}
                                                 </Button>
                                             </CardContent>
                                         </Card>
@@ -107,14 +113,14 @@ export function SettingsPage() {
                                         <Card className="p-6 border-destructive/30">
                                             <CardHeader className="p-0 mb-4">
                                                 <CardTitle className="text-destructive flex items-center gap-2">
-                                                    <AlertTriangle className="h-5 w-5" />Danger Zone
+                                                    <AlertTriangle className="h-5 w-5" />{t('settings.dangerZone')}
                                                 </CardTitle>
                                             </CardHeader>
                                             <CardContent className="p-0">
                                                 <p className="text-sm text-muted-foreground mb-4">
-                                                    Once you delete your account, there is no going back. Please be certain.
+                                                    {t('settings.dangerWarning')}
                                                 </p>
-                                                <Button variant="destructive" size="sm">Delete Account</Button>
+                                                <Button variant="destructive" size="sm">{t('settings.deleteAccount')}</Button>
                                             </CardContent>
                                         </Card>
                                     </motion.div>
@@ -124,37 +130,52 @@ export function SettingsPage() {
                                 {activeTab === 'preferences' && (
                                     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5 text-primary" />Appearance</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Palette className="h-5 w-5 text-primary" />{t('settings.appearance')}</CardTitle></CardHeader>
                                             <CardContent className="p-0">
-                                                <div className="flex items-center justify-between">
+                                                <div className="space-y-3">
                                                     <div>
-                                                        <p className="font-medium">Theme</p>
-                                                        <p className="text-sm text-muted-foreground">Choose between light and dark mode</p>
+                                                        <p className="font-medium">{t('settings.theme')}</p>
+                                                        <p className="text-sm text-muted-foreground mb-3">{t('settings.themeDescription')}</p>
                                                     </div>
-                                                    <button
-                                                        onClick={toggleTheme}
-                                                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border hover:border-primary/30 transition-all"
-                                                    >
-                                                        {theme === 'dark' ? <Moon className="h-4 w-4 text-primary" /> : <Sun className="h-4 w-4 text-primary" />}
-                                                        <span className="text-sm font-medium capitalize">{theme}</span>
-                                                    </button>
+                                                    <div className="flex gap-2">
+                                                        {themeOptions.map((opt) => (
+                                                            <button
+                                                                key={opt.mode}
+                                                                onClick={() => setThemeMode(opt.mode)}
+                                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all duration-200 ${
+                                                                    themeMode === opt.mode
+                                                                        ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
+                                                                        : 'bg-surface border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
+                                                                }`}
+                                                            >
+                                                                <opt.icon className="h-4 w-4" />
+                                                                <span className="text-sm font-medium">{opt.label}</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </CardContent>
                                         </Card>
 
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-primary" />Regional</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-primary" />{t('settings.regional')}</CardTitle></CardHeader>
                                             <CardContent className="p-0 space-y-4">
                                                 <div>
-                                                    <label className="text-sm font-medium mb-2 block">Language</label>
-                                                    <select value={language} onChange={(e) => setLanguage(e.target.value)} className="input max-w-xs">
-                                                        {languages.map((l) => <option key={l} value={l}>{l}</option>)}
+                                                    <label className="text-sm font-medium mb-2 block">{t('settings.language')}</label>
+                                                    <select
+                                                        value={language}
+                                                        onChange={(e) => setLanguage(e.target.value as typeof language)}
+                                                        className="input max-w-xs"
+                                                    >
+                                                        {availableLanguages.map((l) => (
+                                                            <option key={l} value={l}>{languageNames[l]}</option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label className="text-sm font-medium mb-2 block">Timezone</label>
+                                                    <label className="text-sm font-medium mb-2 block">{t('settings.timezone')}</label>
                                                     <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="input max-w-xs">
-                                                        {timezones.map((t) => <option key={t} value={t}>{t}</option>)}
+                                                        {timezones.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                                                     </select>
                                                 </div>
                                             </CardContent>
@@ -166,12 +187,12 @@ export function SettingsPage() {
                                 {activeTab === 'notifications' && (
                                     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-6"><CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-primary" />Notification Preferences</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-6"><CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5 text-primary" />{t('settings.notificationPrefs')}</CardTitle></CardHeader>
                                             <CardContent className="p-0 space-y-6">
                                                 {[
-                                                    { label: 'Email Notifications', description: 'Receive trip updates, reports, and alerts via email', value: emailNotif, setter: setEmailNotif },
-                                                    { label: 'SMS Notifications', description: 'Get critical alerts via SMS to your registered phone', value: smsNotif, setter: setSmsNotif },
-                                                    { label: 'Push Notifications', description: 'Browser push notifications for real-time updates', value: pushNotif, setter: setPushNotif },
+                                                    { label: t('settings.emailNotif'), description: t('settings.emailNotifDesc'), value: emailNotif, setter: setEmailNotif },
+                                                    { label: t('settings.smsNotif'), description: t('settings.smsNotifDesc'), value: smsNotif, setter: setSmsNotif },
+                                                    { label: t('settings.pushNotif'), description: t('settings.pushNotifDesc'), value: pushNotif, setter: setPushNotif },
                                                 ].map((item) => (
                                                     <div key={item.label} className="flex items-center justify-between">
                                                         <div>
@@ -197,30 +218,30 @@ export function SettingsPage() {
                                 {activeTab === 'security' && (
                                     <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />Session Information</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-4"><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-primary" />{t('settings.sessionInfo')}</CardTitle></CardHeader>
                                             <CardContent className="p-0 space-y-3">
                                                 <div className="flex items-center justify-between py-2">
-                                                    <span className="text-sm text-muted-foreground">Current session</span>
-                                                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">Active</span>
+                                                    <span className="text-sm text-muted-foreground">{t('settings.currentSession')}</span>
+                                                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">{t('common.active')}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between py-2">
-                                                    <span className="text-sm text-muted-foreground">Last sign in</span>
+                                                    <span className="text-sm text-muted-foreground">{t('settings.lastSignIn')}</span>
                                                     <span className="text-sm">{user?.lastSignInAt ? new Date(user.lastSignInAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A'}</span>
                                                 </div>
                                                 <Button variant="outline" size="sm" onClick={() => openUserProfile()}>
-                                                    <ExternalLink className="h-4 w-4 mr-2" />Manage Sessions in Clerk
+                                                    <ExternalLink className="h-4 w-4 mr-2" />{t('settings.manageSessions')}
                                                 </Button>
                                             </CardContent>
                                         </Card>
 
                                         <Card className="p-6">
-                                            <CardHeader className="p-0 mb-4"><CardTitle>Two-Factor Authentication</CardTitle></CardHeader>
+                                            <CardHeader className="p-0 mb-4"><CardTitle>{t('settings.twoFactor')}</CardTitle></CardHeader>
                                             <CardContent className="p-0">
                                                 <p className="text-sm text-muted-foreground mb-4">
-                                                    Add an extra layer of security to your account. 2FA is managed through your Clerk profile.
+                                                    {t('settings.twoFactorDesc')}
                                                 </p>
                                                 <Button variant="outline" onClick={() => openUserProfile()}>
-                                                    <Shield className="h-4 w-4 mr-2" />Configure 2FA
+                                                    <Shield className="h-4 w-4 mr-2" />{t('settings.configure2FA')}
                                                 </Button>
                                             </CardContent>
                                         </Card>
